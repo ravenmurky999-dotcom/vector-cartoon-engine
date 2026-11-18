@@ -1,0 +1,411 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vector Cartoon Engine - Prototype 01</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: #111827;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+header {
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  background: #182337;
+}
+
+header strong { font-size: 16px; }
+header span { color: #a9bad2; font-size: 12px; }
+
+main {
+  width: 100%;
+  max-width: 1100px;
+  margin: auto;
+  padding: 14px;
+}
+
+#stage {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 14px;
+  background: #8bc9e8;
+  border: 1px solid #42516a;
+}
+
+svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 14px;
+}
+
+button {
+  background: #263955;
+  color: white;
+  border: 1px solid #526783;
+  border-radius: 9px;
+  padding: 11px 16px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+button:active { background: #42628d; }
+
+#status {
+  margin-top: 12px;
+  color: #b9c9df;
+  font-size: 13px;
+}
+
+#progress {
+  width: 100%;
+  margin-top: 12px;
+  accent-color: #f5c75e;
+}
+
+.paused * {
+  animation-play-state: paused !important;
+}
+
+.cloud {
+  animation: drift 24s linear infinite;
+}
+
+.cloud.second {
+  animation-duration: 34s;
+  animation-direction: reverse;
+}
+
+.sun {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: sunGlow 4s ease-in-out infinite alternate;
+}
+
+.walker {
+  animation: walk 0.75s ease-in-out infinite;
+}
+
+.leg-a { animation: legA 0.75s ease-in-out infinite; }
+.leg-b { animation: legB 0.75s ease-in-out infinite; }
+.arm-a { animation: legB 0.75s ease-in-out infinite; }
+.arm-b { animation: legA 0.75s ease-in-out infinite; }
+
+@keyframes drift {
+  from { transform: translateX(-180px); }
+  to { transform: translateX(1100px); }
+}
+
+@keyframes sunGlow {
+  from { opacity: .88; }
+  to { opacity: 1; }
+}
+
+@keyframes walk {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes legA {
+  0%,100% { transform: rotate(24deg); }
+  50% { transform: rotate(-24deg); }
+}
+
+@keyframes legB {
+  0%,100% { transform: rotate(-24deg); }
+  50% { transform: rotate(24deg); }
+}
+</style>
+</head>
+
+<body>
+<header>
+  <strong>VECTOR CARTOON ENGINE</strong>
+  <span>Prototype 01 · Sunrise Journey</span>
+</header>
+
+<main>
+  <div id="stage">
+    <svg id="scene" viewBox="0 0 960 540"
+         xmlns="http://www.w3.org/2000/svg">
+
+      <defs>
+        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#426b9b"/>
+          <stop offset="60%" stop-color="#f0a978"/>
+          <stop offset="100%" stop-color="#f9d79b"/>
+        </linearGradient>
+
+        <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+          <stop stop-color="#668c54"/>
+          <stop offset="100%" stop-color="#253e35"/>
+        </linearGradient>
+
+        <radialGradient id="sunlight">
+          <stop stop-color="#fff6bb" stop-opacity=".8"/>
+          <stop offset="100%" stop-color="#ffdc83" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+
+      <!-- SKY -->
+      <rect width="960" height="540" fill="url(#sky)"/>
+      <circle cx="730" cy="175" r="135" fill="url(#sunlight)"/>
+      <circle class="sun" cx="730" cy="175" r="58"
+              fill="#ffe8a1"/>
+
+      <!-- CLOUDS -->
+      <g class="cloud" fill="#fff0d7" opacity=".8">
+        <ellipse cx="130" cy="120" rx="65" ry="20"/>
+        <circle cx="105" cy="108" r="25"/>
+        <circle cx="145" cy="103" r="31"/>
+      </g>
+
+      <g class="cloud second" fill="#fff5e9" opacity=".65">
+        <ellipse cx="520" cy="95" rx="72" ry="18"/>
+        <circle cx="495" cy="83" r="25"/>
+        <circle cx="540" cy="78" r="30"/>
+      </g>
+
+      <!-- DISTANT MOUNTAINS -->
+      <path d="M0 340 L150 205 L270 330 L420 190
+               L600 340 L750 220 L960 350 L960 540 L0 540Z"
+            fill="#718d86"/>
+
+      <path d="M0 370 L210 270 L390 365 L570 260
+               L780 370 L960 280 L960 540 L0 540Z"
+            fill="#4f7564"/>
+
+      <!-- FOREST -->
+      <g fill="#315b49">
+        <path d="M30 360 L75 235 L120 360Z"/>
+        <path d="M105 360 L155 220 L205 360Z"/>
+        <path d="M790 360 L845 205 L900 360Z"/>
+        <path d="M865 360 L915 240 L965 360Z"/>
+      </g>
+
+      <!-- GROUND -->
+      <path d="M0 365 Q250 330 480 370
+               T960 360 L960 540 L0 540Z"
+            fill="url(#ground)"/>
+
+      <!-- PATH -->
+      <path d="M310 540 Q450 440 540 370
+               Q620 325 760 355"
+            fill="none" stroke="#c5a879"
+            stroke-width="65" opacity=".8"/>
+
+      <path d="M310 540 Q450 440 540 370
+               Q620 325 760 355"
+            fill="none" stroke="#e4c99c"
+            stroke-width="3" stroke-dasharray="12 15"
+            opacity=".7"/>
+
+      <!-- SMALL PLANTS -->
+      <g fill="#91ae68">
+        <path d="M90 465 q-20 -40 -28 -5 q20 0 28 5
+                 q8 -42 25 -23 q-10 18 -25 23Z"/>
+        <path d="M850 440 q-20 -40 -28 -5 q20 0 28 5
+                 q8 -42 25 -23 q-10 18 -25 23Z"/>
+      </g>
+
+      <!-- WALKING CHARACTER -->
+      <g id="character" class="walker" transform="translate(445 340)">
+
+        <!-- Shadow -->
+        <ellipse cx="0" cy="126" rx="44" ry="10"
+                 fill="#182a24" opacity=".35"/>
+
+        <!-- Back arm -->
+        <g class="arm-a" style="transform-origin:-15px 52px">
+          <path d="M-15 52 Q-30 76 -23 94"
+                stroke="#c88755" stroke-width="13"
+                stroke-linecap="round" fill="none"/>
+        </g>
+
+        <!-- Back leg -->
+        <g class="leg-a" style="transform-origin:-10px 94px">
+          <path d="M-10 94 L-18 121 L-30 129"
+                stroke="#263d62" stroke-width="17"
+                stroke-linecap="round" fill="none"/>
+          <path d="M-30 129 L-13 132"
+                stroke="#263d62" stroke-width="10"
+                stroke-linecap="round"/>
+        </g>
+
+        <!-- Body -->
+        <path d="M-25 42 Q0 32 25 42
+                 L29 96 Q0 110 -29 96Z"
+              fill="#a94e3e"/>
+
+        <!-- Jacket detail -->
+        <path d="M0 43 L0 99"
+              stroke="#e5a06e" stroke-width="3"/>
+
+        <!-- Front leg -->
+        <g class="leg-b" style="transform-origin:10px 94px">
+          <path d="M10 94 L18 119 L30 129"
+                stroke="#263d62" stroke-width="17"
+                stroke-linecap="round" fill="none"/>
+          <path d="M30 129 L46 132"
+                stroke="#263d62" stroke-width="10"
+                stroke-linecap="round"/>
+        </g>
+
+        <!-- Front arm -->
+        <g class="arm-b" style="transform-origin:15px 52px">
+          <path d="M15 52 Q30 76 23 94"
+                stroke="#c88755" stroke-width="13"
+                stroke-linecap="round" fill="none"/>
+        </g>
+
+        <!-- Neck -->
+        <rect x="-8" y="27" width="16" height="22"
+              rx="6" fill="#bd8056"/>
+
+        <!-- Head -->
+        <ellipse cx="0" cy="5" rx="29" ry="34"
+                 fill="#c98d63"/>
+
+        <!-- Hair -->
+        <path d="M-28 2 Q-32 -29 -7 -35
+                 Q18 -44 29 -18 L28 -3
+                 Q12 -21 -1 -17
+                 Q-16 -12 -28 2Z"
+              fill="#292a35"/>
+
+        <!-- Face -->
+        <ellipse cx="11" cy="8" rx="3.5" ry="4"
+                 fill="#262631"/>
+        <path d="M18 20 Q25 24 29 18"
+              fill="none" stroke="#7a423b"
+              stroke-width="2.5" stroke-linecap="round"/>
+
+        <!-- Ear -->
+        <circle cx="-27" cy="10" r="6"
+                fill="#bd8056"/>
+      </g>
+
+      <!-- SCENE TITLE -->
+      <g>
+        <rect x="25" y="25" width="245" height="48"
+              rx="10" fill="#17283d" opacity=".7"/>
+        <text x="43" y="55" fill="white"
+              font-size="19" font-weight="bold">
+          THE MORNING JOURNEY
+        </text>
+      </g>
+
+      <text x="480" y="510" text-anchor="middle"
+            font-size="17" fill="#ffffff"
+            opacity=".9">
+        A new adventure begins...
+      </text>
+
+    </svg>
+  </div>
+
+  <div class="controls">
+    <button id="play">Pause</button>
+    <button id="restart">Restart</button>
+    <button id="zoomIn">Zoom +</button>
+    <button id="zoomOut">Zoom -</button>
+    <button id="resetZoom">Reset view</button>
+  </div>
+
+  <input id="progress" type="range"
+         min="0" max="100" value="0"/>
+
+  <div id="status">
+    Engine ready · Scene 01 · Animation playing
+  </div>
+</main>
+
+<script>
+const scene = document.getElementById("scene");
+const stage = document.getElementById("stage");
+const playButton = document.getElementById("play");
+const statusText = document.getElementById("status");
+const progress = document.getElementById("progress");
+
+let paused = false;
+let zoom = 1;
+let elapsed = 0;
+let previous = performance.now();
+
+function updateView() {
+  const width = 960 / zoom;
+  const height = 540 / zoom;
+  const x = (960 - width) / 2;
+  const y = (540 - height) / 2;
+  scene.setAttribute("viewBox", `${x} ${y} ${width} ${height}`);
+}
+
+function setPaused(value) {
+  paused = value;
+  stage.classList.toggle("paused", paused);
+  playButton.textContent = paused ? "Play" : "Pause";
+  statusText.textContent = paused
+    ? "Animation paused"
+    : "Engine ready · Scene 01 · Animation playing";
+}
+
+playButton.addEventListener("click", () => {
+  setPaused(!paused);
+});
+
+document.getElementById("restart").addEventListener("click", () => {
+  elapsed = 0;
+  progress.value = 0;
+  setPaused(false);
+  statusText.textContent = "Scene restarted";
+});
+
+document.getElementById("zoomIn").addEventListener("click", () => {
+  zoom = Math.min(zoom + 0.15, 2.5);
+  updateView();
+});
+
+document.getElementById("zoomOut").addEventListener("click", () => {
+  zoom = Math.max(zoom - 0.15, 1);
+  updateView();
+});
+
+document.getElementById("resetZoom").addEventListener("click", () => {
+  zoom = 1;
+  updateView();
+});
+
+function loop(now) {
+  const delta = Math.min((now - previous) / 1000, 0.1);
+  previous = now;
+
+  if (!paused) {
+    elapsed += delta;
+    progress.value = (elapsed % 30) / 30 * 100;
+  }
+
+  requestAnimationFrame(loop);
+}
+
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
